@@ -93,4 +93,4 @@ if st.button("🚀 수요·공급 분석하기", use_container_width=True):
                     fig = draw_market_chart(analysis)
                     st.pyplot(fig)
             except Exception as e:
-                st.error("API 키를 설정하면 정상 작동합니다! 지금은 화면 구성만 확인하세요.")
+                st.error(f"실제 에러 내용: {e}")
