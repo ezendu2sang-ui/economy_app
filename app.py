@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from openai import OpenAI
 
-# OpenAI API 클라이언트 설정 (나중에 본인의 키로 바꿔야 해요!)
-client = OpenAI(api_key="YOUR_OPENAI_API_KEY")
+# Streamlit 서버의 Secrets에서 키를 안전하게 가져옵니다.
+client = OpenAI(api_key=st.secrets["YOUR_OPENAI_API_KEY"])
 
 def analyze_economic_article(article_text):
     prompt = f"""
