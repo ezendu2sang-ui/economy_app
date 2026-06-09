@@ -11,7 +11,7 @@ st.set_page_config(page_title="경제 수행평가 유레카!", layout="wide")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght=400;500;600;700;800&display=swap');
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Pretendard', sans-serif;
         background-color: #f8fafc;
@@ -35,22 +35,6 @@ st.markdown("""
     .result-badge {
         background-color: #eff6ff;
         color: #1e40af;
-        font-size: 0.75rem;
-        font-weight: 800;
-        padding: 0.25rem 0.6rem;
-        border-radius: 6px;
-    }
-    .dictionary-badge {
-        background-color: #fef3c7;
-        color: #92400e;
-        font-size: 0.75rem;
-        font-weight: 800;
-        padding: 0.25rem 0.6rem;
-        border-radius: 6px;
-    }
-    .guide-badge {
-        background-color: #f5f3ff;
-        color: #5b21b6;
         font-size: 0.75rem;
         font-weight: 800;
         padding: 0.25rem 0.6rem;
@@ -90,8 +74,8 @@ except Exception:
 # --- 상단 헤더 영역 ---
 st.markdown("""
     <div class="main-header">
-        <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0;">🧠 경제 수행평가 유레카! (스스로 학습형)</h1>
-        <p style="font-size: 0.85rem; color: #64748b; margin: 5px 0 0 0;">기사를 분석하고 원리를 이해하여 나만의 수행평가 기사를 완성해 보세요.</p>
+        <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0;">🧠 경제 수행평가 유레카! (스스로 완성형)</h1>
+        <p style="font-size: 0.85rem; color: #64748b; margin: 5px 0 0 0;">AI의 원리 해설과 맞춤형 작성 가이드를 참고하여 나만의 멋진 경제 기사를 작성해 보세요.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -101,7 +85,7 @@ col_left, col_right = st.columns([5, 7], gap="large")
 with col_left:
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.markdown('<h3><span class="step-badge">STEP 1</span><b>조사한 경제 뉴스 입력</b></h3>', unsafe_allow_html=True)
-    st.write("가져온 뉴스 기사의 제목과 본문을 입력하면 AI 멘토가 원리를 설명해 줍니다.")
+    st.write("가져온 뉴스 기사의 제목과 본문을 입력하면 AI 멘토가 분석 가이드를 열어줍니다.")
     
     title_input = st.text_input("📍 뉴스 제목", placeholder="예시: 기상이변으로 원두 생산 비상, 커피값 오르나")
     body_input = st.text_area("📍 뉴스 본문", placeholder="뉴스 내용을 이곳에 붙여넣으세요...", height=300)
@@ -111,22 +95,21 @@ with col_right:
     if not title_input and not body_input:
         st.markdown("""
             <div class="card-box" style="text-align: center; padding: 5rem 2rem;">
-                <h3 style="color: #3b82f6; font-size: 1.25rem;">💡 경제 탐구 가이드 가동 준비 완료!</h3>
+                <h3 style="color: #3b82f6; font-size: 1.25rem;">💡 경제 탐구 멘토링 가동 준비 완료!</h3>
                 <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
-                    왼쪽에 뉴스를 입력하면 정답을 통째로 주는 대신,<br>
-                    <b>중학생 눈높이 해설 ➡️ 어려운 용어 사전 ➡️ 변동 그래프 2개 ➡️ 직접 쓰기 꿀팁</b> 순서로<br>
-                    공부하며 생각할 수 있는 멋진 가이드를 열어드립니다.
+                    왼쪽에 뉴스를 입력하면 정답을 그대로 복사해 주는 대신,<br>
+                    <b>중학생 눈높이 원리 ➡️ 정확한 변동 화살표 차트 ➡️ 영역별 작성 안내 및 생생한 예시</b>를 제공합니다.
                 </p>
             </div>
         """, unsafe_allow_html=True)
     else:
-        with st.spinner("🕵️ AI 멘토가 기사 속 시장 경제 원리를 분석하는 중입니다..."):
+        with st.spinner("🕵️ AI 멘토가 기사 속 시장 경제 원리를 정밀 분석 중입니다..."):
             try:
-                # 학생이 스스로 생각하게 만드는 가이드형 프롬프트
+                # 뼈대와 질문, 그리고 구체적인 작성 예시를 포함하도록 프롬프트 고도화
                 prompt = f"""
                 너는 중학교 사회 선생님이자 친절한 경제 멘토야. 
-                학생이 가져온 경제 뉴스를 분석해서 스스로 수행평가(경제 기사 작성)를 완성할 수 있도록 '학습 가이드라인'을 제공해 주렴.
-                절대로 완성된 기사를 통째로 작성해 주지 말고, 원리를 이해시키는 데 집중해줘. 말투는 "~란다", "~요" 같은 다정한 선생님 말투를 써줘.
+                학생이 가져온 경제 뉴스를 분석해서 스스로 '경제 기사 작성하기' 수행평가를 완벽하게 완성할 수 있도록 '학습 가이드라인 및 영역별 구체적 예시'를 제공해 주렴.
+                말투는 "~란다", "~요" 같은 다정한 선생님 말투를 써줘.
 
                 [입력 뉴스 제목]: {title_input}
                 [입력 뉴스 본문]: {body_input}
@@ -138,18 +121,25 @@ with col_right:
                 그 아래에는 구분선(---)을 긋고 아래 목차대로 내용을 채워줘:
                 ---
                 ### 1. 🔍 중학생 눈높이 원리 해설
-                * **어떤 시장 이야기인가요?**: (기사 속 상품 시장이 무엇인지 설명)
-                * **현재의 수요와 공급 변동**: (수요나 공급 중 무엇이 왜 움직였는지 중학생이 이해하기 쉽게 비유를 들어 설명)
-                * **가격과 거래량은 어떻게 되었나요?**: (수요·공급 법칙에 따라 균형 가격과 거래량이 변한 원리를 설명)
+                * **어떤 시장 이야기인가요?**: (기사 속 상품 시장이 무엇인지 명확히 짚어주기)
+                * **원리 쉽게 이해하기**: (현재 기사에서 수요나 공급 중 무엇이 왜 움직였는지 비유를 들어 쉽게 해설)
                 
                 ### 2. 📖 기사 속 '어려운 경제 용어' 쏙쏙 사전
-                (기사 본문이나 해설에 나온 어려운 경제 단어나 한자어 용어를 2~3개 골라 뜻을 아주 쉽게 풀이해줘)
+                (기사 본문에 나온 어려운 단어나 경제 개념을 2개 골라 뜻을 아주 쉽게 풀이해줘)
 
-                ### 3. ✍️ 나만의 기사 작성하기! 꿀팁 가이드
-                (수행평가 양식인 표제, 전문, 본문을 잘 쓰기 위한 힌트나 질문을 던져줘)
-                * **[표제(제목) 힌트]**: (뉴스 제목을 그대로 베끼지 않고 '수요·공급' 단어가 연상되도록 참신하게 짓는 팁 제안)
-                * **[전문(요약) 힌트]**: (전문 3줄에 꼭 들어가야 할 핵심 포인트 짚어주기)
-                * **[본문 작성 가이드]**: (현재 원인 분석과 미래 예측을 글로 풀어낼 때 서술해야 하는 논리적 흐름이나 질문 던져주기)
+                ### 3. ✍️ 나만의 기사 작성하기! 핵심 가이드라인 & 예시
+                
+                #### 📌 [표제(제목) 작성법]
+                * **안내**: 뉴스 제목을 그대로 베끼지 말고, 기사 내용을 관통하면서 '수요'나 '공급'이라는 단어가 직접 연상되거나 포함되도록 참신하게 지어보렴.
+                * **💡 작성 예시**: (이 기사의 내용을 바탕으로 수요/공급 단어가 들어간 멋진 제목 예시를 1~2개 제안해줘)
+
+                #### 📌 [전문(3줄 요약) 작성법]
+                * **안내**: 전문은 기사 전체를 읽지 않아도 핵심을 알 수 있게 3줄로 요약하는 곳이란다. **1) 현재 변동 원인, 2) 그로 인한 현재 가격 결과, 3) 미래에 예상되는 변화나 가격 예측**이 각각 한 줄씩 들어가면 완벽해!
+                * **💡 작성 예시**: (위 조건 3가지를 모두 만족하는 3줄 요약 전문 예시를 완성된 글로 보여줘)
+
+                #### 📌 [본문 작성법 (그래프 활용 및 설명)]
+                * **안내**: 본문에는 우리가 아래에 그려준 **현재 그래프(①)와 미래 그래프(②)를 모두 첨부**해야 한단다! 글을 쓸 때는 반드시 그래프 속 곡선이 움직인 방향을 설명하며, **"현재는 [수요/공급] 요인 때문에 가격이 [상승/하락]했지만, 미래에는 새로운 [수요/공급] 변동 요인(선호도, 대체재 등)이 생겨 가격이 최종적으로 [어떻게] 될 것이다"**라는 인과관계와 결과를 논리적으로 적어주렴.
+                * **💡 작성 예시**: (학생들이 보고 흐름을 배울 수 있도록, 현재 원인·결과와 미래 예측·결과가 경제학적 인과관계로 매끄럽게 연결된 본문 글 예시를 완성도 있게 작성해줘)
                 """
 
                 response = client.chat.completions.create(
@@ -182,12 +172,10 @@ with col_right:
                     except:
                         pass
                 
-                # 가이드 텍스트 분리
                 ai_guide = "\n".join([line for line in lines if not line.startswith("[DATA]")])
                 if "---" in ai_guide:
                     ai_guide = ai_guide.split("---", 1)[1].strip()
 
-                # 텍스트 영역별 분할 파싱 (사전, 가이드 박스 디자인화용)
                 parts = ai_guide.split("###")
                 part_explain = ""
                 part_dict = ""
@@ -204,46 +192,61 @@ with col_right:
                     st.markdown(f"### {part_explain.strip()}")
                     st.markdown('</div>', unsafe_allow_html=True)
 
-                # 5. 그래프 2개 시각화 영역 출력
+                # 5. 그래프 2개 시각화 영역 (화살표 및 실선 보정 버전)
                 st.markdown('<div class="card-box">', unsafe_allow_html=True)
-                st.markdown('<h3><span class="result-badge">수행평가 핵심</span> <b>생각을 돕는 수요·공급 곡선 (2가지 상황)</b></h3>', unsafe_allow_html=True)
-                st.write("AI 멘토가 그린 그래프를 보며 시장 균형이 어떻게 움직였는지 관찰해 보세요.")
+                st.markdown('<h3><span class="result-badge">수행평가 제출용 차트</span> <b>수요·공급 곡선 균형 이동 시뮬레이션 (2단계)</b></h3>', unsafe_allow_html=True)
+                st.write("오른쪽 화살표 방향을 잘 관찰해 보세요. 미래 그래프는 현재 이동한 상태(점선)를 기준으로 추가 변동을 보여줍니다.")
                 
                 q_vals = np.linspace(10, 90, 100)
                 d_base = 100 - q_vals
                 s_base = q_vals
 
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.2))
+                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.5))
                 
-                # [그래프 1: 현재 상황]
-                ax1.plot(q_vals, d_base, color="#94a3b8", linestyle="--", alpha=0.5, label="원래 수요(D)")
-                ax1.plot(q_vals, s_base, color="#94a3b8", linestyle="--", alpha=0.5, label="원래 공급(S)")
-                ax1.plot(q_vals, d_base + cur_d, color="#dc2626", linewidth=2, label="현재 수요(D1)")
-                ax1.plot(q_vals, s_base + cur_s, color="#2563eb", linewidth=2, label="현재 공급(S1)")
+                # --- [그래프 1: 현재 상황] ---
+                ax1.plot(q_vals, d_base, color="#cbd5e1", linestyle="--", alpha=0.7, label="원래 수요(D)")
+                ax1.plot(q_vals, s_base, color="#cbd5e1", linestyle="--", alpha=0.7, label="원래 공급(S)")
+                
+                # 변동이 일어난 실제 곡선을 굵은 실선으로 강조
+                ax1.plot(q_vals, d_base + cur_d, color="#e11d48", linewidth=2.5, label="현재 수요(D1)")
+                ax1.plot(q_vals, s_base + cur_s, color="#2563eb", linewidth=2.5, label="현재 공급(S1)")
+                
+                # 선명하고 확실한 변동 방향 화살표 표시
                 if cur_d != 0:
-                    ax1.annotate('', xy=(50 + cur_d, 50 + cur_d/2), xytext=(50, 50), arrowprops=dict(facecolor='#dc2626', shrink=0.1, width=1))
+                    ax1.annotate('', xy=(50 + cur_d, 50 + cur_d/2), xytext=(50, 50),
+                                 arrowprops=dict(facecolor='#e11d48', edgecolor='#be123c', shrink=0.05, width=2, headwidth=7))
                 if cur_s != 0:
-                    ax1.annotate('', xy=(50 - cur_s/2, 50 + cur_s/2), xytext=(50, 50), arrowprops=dict(facecolor='#2563eb', shrink=0.1, width=1))
-                ax1.set_title(f"① 현재 {product_name} 시장의 변동", fontproperties=font_prop, fontsize=10, fontweight="bold")
-                ax1.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=8)
-                ax1.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=8)
+                    ax1.annotate('', xy=(50 - cur_s/2, 50 + cur_s/2), xytext=(50, 50),
+                                 arrowprops=dict(facecolor='#2563eb', edgecolor='#1d4ed8', shrink=0.05, width=2, headwidth=7))
+                
+                ax1.set_title(f"① 현재 {product_name} 시장의 균형 이동", fontproperties=font_prop, fontsize=10, fontweight="bold")
+                ax1.set_xlabel("수량 (Quantity)", fontproperties=font_prop, fontsize=8)
+                ax1.set_ylabel("가격 (Price)", fontproperties=font_prop, fontsize=8)
                 ax1.legend(prop=font_prop, loc="upper right", fontsize=7)
-                ax1.grid(True, linestyle=':', alpha=0.3)
+                ax1.grid(True, linestyle=':', alpha=0.4)
 
-                # [그래프 2: 미래 예측 상황]
-                ax2.plot(q_vals, d_base + cur_d, color="#94a3b8", linestyle="--", alpha=0.5, label="현재 수요(D1)")
-                ax2.plot(q_vals, s_base + cur_s, color="#94a3b8", linestyle="--", alpha=0.5, label="현재 공급(S1)")
-                ax2.plot(q_vals, d_base + cur_d + fut_d, color="#b91c1c", linewidth=2, label="미래 수요(D2)")
-                ax2.plot(q_vals, s_base + cur_s + fut_s, color="#1d4ed8", linewidth=2, label="미래 공급(S2)")
+                # --- [그래프 2: 미래 예측 상황] ---
+                # 현재 상태를 기준선(연한 점선)으로 깔아줌
+                ax2.plot(q_vals, d_base + cur_d, color="#fca5a5", linestyle="--", alpha=0.7, label="현재 수요(D1)")
+                ax2.plot(q_vals, s_base + cur_s, color="#93c5fd", linestyle="--", alpha=0.7, label="현재 공급(S1)")
+                
+                # 미래의 최종 변동 곡선을 가장 굵은 실선으로 완벽 시각화
+                ax2.plot(q_vals, d_base + cur_d + fut_d, color="#b91c1c", linewidth=2.8, label="미래 수요(D2)")
+                ax2.plot(q_vals, s_base + cur_s + fut_s, color="#1d4ed8", linewidth=2.8, label="미래 공급(S2)")
+                
+                # 미래 변동 화살표 (현재 위치에서 출발하여 미래 위치로 향함)
                 if fut_d != 0:
-                    ax2.annotate('', xy=(50 + cur_d + fut_d, 50 + cur_d/2 + fut_d/2), xytext=(50 + cur_d, 50 + cur_d/2), arrowprops=dict(facecolor='#b91c1c', shrink=0.1, width=1))
+                    ax2.annotate('', xy=(50 + cur_d + fut_d, 50 + cur_d/2 + fut_d/2), xytext=(50 + cur_d, 50 + cur_d/2),
+                                 arrowprops=dict(facecolor='#b91c1c', edgecolor='#7f1d1d', shrink=0.05, width=2, headwidth=7))
                 if fut_s != 0:
-                    ax2.annotate('', xy=(50 - cur_s/2 - fut_s/2, 50 + cur_s/2 + fut_s/2), xytext=(50 - cur_s/2, 50 + cur_s/2), arrowprops=dict(facecolor='#1d4ed8', shrink=0.1, width=1))
-                ax2.set_title(f"② 미래 {product_name} 시장 예측", fontproperties=font_prop, fontsize=10, fontweight="bold")
-                ax2.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=8)
-                ax2.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=8)
+                    ax2.annotate('', xy=(50 - cur_s/2 - fut_s/2, 50 + cur_s/2 + fut_s/2), xytext=(50 - cur_s/2, 50 + cur_s/2),
+                                 arrowprops=dict(facecolor='#1d4ed8', edgecolor='#1e3a8a', shrink=0.05, width=2, headwidth=7))
+                
+                ax2.set_title(f"② 미래 {product_name} 시장 예측 이동", fontproperties=font_prop, fontsize=10, fontweight="bold")
+                ax2.set_xlabel("수량 (Quantity)", fontproperties=font_prop, fontsize=8)
+                ax2.set_ylabel("가격 (Price)", fontproperties=font_prop, fontsize=8)
                 ax2.legend(prop=font_prop, loc="upper right", fontsize=7)
-                ax2.grid(True, linestyle=':', alpha=0.3)
+                ax2.grid(True, linestyle=':', alpha=0.4)
 
                 plt.tight_layout()
                 st.pyplot(fig)
@@ -255,7 +258,7 @@ with col_right:
                     st.markdown(f"### {part_dict.strip()}")
                     st.markdown('</div>', unsafe_allow_html=True)
 
-                # 7. 기사 작성 가이드 출력
+                # 7. 기사 작성 가이드라인 및 예시 통합 출력
                 if part_write_guide:
                     st.markdown('<div class="card-box" style="background-color: #faf5ff; border: 1px solid #f3e8ff;">', unsafe_allow_html=True)
                     st.markdown(f"### {part_write_guide.strip()}")
