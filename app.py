@@ -106,7 +106,6 @@ with col_right:
     else:
         with st.spinner("🕵️ AI 멘토가 기사 속 시장 경제 원리를 정밀 분석 중입니다..."):
             try:
-                # 메커니즘을 꼬지 않도록 AI 프롬프트에 엄격한 경제학 가이드라인 추가
                 prompt = f"""
                 너는 중학교 사회 선생님이자 친절한 경제 멘토야. 
                 학생이 가져온 경제 뉴스를 바탕으로, 현재의 수요·공급 상태와 '미래의 타당한 예측'을 명확하게 도출해서 알려주렴.
@@ -151,7 +150,6 @@ with col_right:
                 )
                 full_response = response.choices[0].message.content
 
-                # 유연하고 강력한 데이터 파싱 로직으로 업그레이드 (공백 제거)
                 lines = full_response.split('\n')
                 data_line = [line for line in lines if "[DATA]" in line]
                 
@@ -164,7 +162,6 @@ with col_right:
                         raw_data = [x.strip() for x in raw_str.split(",")]
                         product_name = raw_data[0]
                         
-                        # 완전한 경제학적 수평 평행이동 값 세팅 (스케일 최적화)
                         if "증가" in raw_data[1]: cur_d = 20
                         elif "감소" in raw_data[1]: cur_d = -20
                         if "증가" in raw_data[2]: cur_s = 20
@@ -184,73 +181,111 @@ with col_right:
                 intro_part = ai_guide.split("### 3. ✍️")[0].strip() if "### 3. ✍️" in ai_guide else ai_guide
                 guide_part = "### 3. ✍️ " + ai_guide.split("### 3. ✍️")[1].strip() if "### 3. ✍️" in ai_guide else ""
 
-                # 1. 상단 해설서 출력
                 st.markdown('<div class="card-box">', unsafe_allow_html=True)
                 st.markdown(intro_part)
                 st.markdown('</div>', unsafe_allow_html=True)
 
-                # 2. 중앙 그래프 시각화 (★경제학적 원리와 깨끗한 화살표 완벽 보정★)
+                # --- 2. 중앙 그래프 시각화 (★시장 균형 가격 및 거래량 표기 버전★) ---
                 st.markdown('<div class="card-box">', unsafe_allow_html=True)
-                st.markdown('<h3><span class="result-badge">수행평가 차트 연계</span> <b>시각화 가이드: 단계별 곡선 변화</b></h3>', unsafe_allow_html=True)
+                st.markdown('<h3><span class="result-badge">수행평가 차트 연계</span> <b>시각화 가이드: 균형 가격과 거래량의 변동</b></h3>', unsafe_allow_html=True)
+                st.write("축에 표시된 P(가격)와 Q(거래량)의 변화를 관찰하세요. 곡선이 만나는 교점이 어떻게 이동하는지 본문에 서술해야 합니다.")
                 
-                q_vals = np.linspace(10, 90, 100)
+                q_vals = np.linspace(0, 100, 100)
                 d_base = 100 - q_vals
                 s_base = q_vals
 
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.5))
+                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.8))
                 
-                # --- ① 현재 그래프 (원래 점선 -> 현재 실선 이동) ---
+                # 수식 연산용 균형점 함수 정의 (D: 100-(q-d_shift), S: q-s_shift)
+                # 교점 계산: 100 - q + d_shift = q - s_shift => 2q = 100 + d_shift + s_shift => q = (100 + d_shift + s_shift)/2
+                def get_equilibrium(d_sh, s_sh):
+                    q_eq = (100 + d_sh + s_sh) / 2
+                    p_eq = q_eq - s_sh
+                    return q_eq, p_eq
+
+                # 원래 기준 균형점 (0, 0)
+                q0, p0 = get_equilibrium(0, 0)
+                # 현재 균형점
+                q1, p1 = get_equilibrium(cur_d, cur_s)
+                # 미래 균형점
+                q2, p2 = get_equilibrium(cur_d + fut_d, cur_s + fut_s)
+
+                # --- ① 현재 그래프 ---
                 ax1.plot(q_vals, d_base, color="#cbd5e1", linestyle="--", alpha=0.7, label="원래 수요(D)")
                 ax1.plot(q_vals, s_base, color="#cbd5e1", linestyle="--", alpha=0.7, label="원래 공급(S)")
                 
-                # 순수 평행 이동 수식 적용
                 d_current = 100 - (q_vals - cur_d)
                 s_current = q_vals - cur_s
-                
                 ax1.plot(q_vals, d_current, color="#e11d48", linewidth=2.5, label="현재 수요(D1)")
                 ax1.plot(q_vals, s_current, color="#2563eb", linewidth=2.5, label="현재 공급(S1)")
                 
-                # [보정] 지저분한 내장 arrow 대신 깔끔하고 직관적인 선형 주석(annotate) 화살표 도입
-                if cur_d != 0:
-                    x_start = 40 if cur_d > 0 else 60
-                    ax1.annotate('', xy=(x_start + cur_d, 100 - x_start), xytext=(x_start, 100 - x_start),
-                                 arrowprops=dict(facecolor='#e11d48', edgecolor='none', width=2, headwidth=7, shrink=0.05))
-                if cur_s != 0:
-                    x_start = 40 if cur_s > 0 else 60
-                    ax1.annotate('', xy=(x_start + cur_s, x_start), xytext=(x_start, x_start),
-                                 arrowprops=dict(facecolor='#2563eb', edgecolor='none', width=2, headwidth=7, shrink=0.05))
-                
+                # [균형점 0 점선 및 텍스트]
+                ax1.plot([0, q0], [p0, p0], color="#94a3b8", linestyle=":", linewidth=1)
+                ax1.plot([q0, q0], [0, p0], color="#94a3b8", linestyle=":", linewidth=1)
+                ax1.text(-8, p0-2, "$P_0$", fontsize=10, fontweight="bold", fontproperties=font_prop)
+                ax1.text(q0-2, -8, "$Q_0$", fontsize=10, fontweight="bold", fontproperties=font_prop)
+                ax1.scatter(q0, p0, color="#475569", s=40, zorder=5)
+
+                # [균형점 1 점선 및 텍스트] (변동이 있을 때만 표기)
+                if cur_d != 0 or cur_s != 0:
+                    ax1.plot([0, q1], [p1, p1], color="#f43f5e" if cur_d!=0 else "#3b82f6", linestyle=":", linewidth=1.2)
+                    ax1.plot([q1, q1], [0, p1], color="#f43f5e" if cur_d!=0 else "#3b82f6", linestyle=":", linewidth=1.2)
+                    ax1.text(-8, p1-2, "$P_1$", fontsize=10, color="#b91c1c" if cur_d!=0 else "#1d4ed8", fontweight="bold", fontproperties=font_prop)
+                    ax1.text(q1-2, -8, "$Q_1$", fontsize=10, color="#b91c1c" if cur_d!=0 else "#1d4ed8", fontweight="bold", fontproperties=font_prop)
+                    ax1.scatter(q1, p1, color="#b91c1c" if cur_d!=0 else "#1d4ed8", s=50, zorder=5)
+                    
+                    # 곡선 이동 가로 화살표 주석
+                    if cur_d != 0:
+                        x_start = 35 if cur_d > 0 else 65
+                        ax1.annotate('', xy=(x_start + cur_d, 100 - x_start), xytext=(x_start, 100 - x_start),
+                                     arrowprops=dict(facecolor='#e11d48', edgecolor='none', width=1.5, headwidth=6, shrink=0.02))
+                    if cur_s != 0:
+                        x_start = 35 if cur_s > 0 else 65
+                        ax1.annotate('', xy=(x_start + cur_s, x_start), xytext=(x_start, x_start),
+                                     arrowprops=dict(facecolor='#2563eb', edgecolor='none', width=1.5, headwidth=6, shrink=0.02))
+
                 ax1.set_title(f"① 현재 {product_name} 시장의 균형 이동", fontproperties=font_prop, fontsize=11, fontweight="bold")
-                ax1.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=9)
-                ax1.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=9)
+                ax1.set_xlim(0, 100), ax1.set_ylim(0, 100)
+                ax1.set_xlabel("수량 (Q)", fontproperties=font_prop), ax1.set_ylabel("가격 (P)", fontproperties=font_prop)
                 ax1.legend(prop=font_prop, loc="upper right", fontsize=8)
                 ax1.grid(True, linestyle=':', alpha=0.3)
 
-                # --- ② 미래 예측 그래프 (현재 최종선을 베이스 점선으로 활용) ---
+                # --- ② 미래 예측 그래프 ---
                 ax2.plot(q_vals, d_current, color="#fca5a5", linestyle="--", alpha=0.7, label="현재 수요(D1)")
                 ax2.plot(q_vals, s_current, color="#93c5fd", linestyle="--", alpha=0.7, label="현재 공급(S1)")
                 
-                # 미래 누적 평행 이동 수식
                 d_future = 100 - (q_vals - cur_d - fut_d)
                 s_future = q_vals - cur_s - fut_s
-                
                 ax2.plot(q_vals, d_future, color="#b91c1c", linewidth=2.8, label="미래 수요(D2)")
                 ax2.plot(q_vals, s_future, color="#1d4ed8", linewidth=2.8, label="미래 공급(S2)")
                 
-                # 미래 예측 깔끔한 수평 화살표 매칭
-                if fut_d != 0:
-                    x_start = 40 if fut_d > 0 else 60
-                    # 현재 시프트된 축 위에서 출발
-                    ax2.annotate('', xy=(x_start + cur_d + fut_d, 100 - x_start), xytext=(x_start + cur_d, 100 - x_start),
-                                 arrowprops=dict(facecolor='#b91c1c', edgecolor='none', width=2, headwidth=7, shrink=0.05))
-                if fut_s != 0:
-                    x_start = 40 if fut_s > 0 else 60
-                    ax2.annotate('', xy=(x_start + cur_s + fut_s, x_start), xytext=(x_start + cur_s, x_start),
-                                 arrowprops=dict(facecolor='#1d4ed8', edgecolor='none', width=2, headwidth=7, shrink=0.05))
-                
+                # [기준선이 되는 현재 균형점 1 표시]
+                ax2.plot([0, q1], [p1, p1], color="#94a3b8", linestyle=":", linewidth=1)
+                ax2.plot([q1, q1], [0, p1], color="#94a3b8", linestyle=":", linewidth=1)
+                ax2.text(-8, p1-2, "$P_1$", fontsize=10, fontweight="bold", fontproperties=font_prop)
+                ax2.text(q1-2, -8, "$Q_1$", fontsize=10, fontweight="bold", fontproperties=font_prop)
+                ax2.scatter(q1, p1, color="#475569", s=40, zorder=5)
+
+                # [미래 최종 균형점 2 표시]
+                if fut_d != 0 or fut_s != 0:
+                    ax2.plot([0, q2], [p2, p2], color="#b91c1c" if fut_d!=0 else "#1d4ed8", linestyle=":", linewidth=1.2)
+                    ax2.plot([q2, q2], [0, p2], color="#b91c1c" if fut_d!=0 else "#1d4ed8", linestyle=":", linewidth=1.2)
+                    ax2.text(-8, p2-2, "$P_2$", fontsize=10, color="#b91c1c" if fut_d!=0 else "#1d4ed8", fontweight="bold", fontproperties=font_prop)
+                    ax2.text(q2-2, -8, "$Q_2$", fontsize=10, color="#b91c1c" if fut_d!=0 else "#1d4ed8", fontweight="bold", fontproperties=font_prop)
+                    ax2.scatter(q2, p2, color="#b91c1c" if fut_d!=0 else "#1d4ed8", s=50, zorder=5)
+                    
+                    if fut_d != 0:
+                        x_start = 35 if fut_d > 0 else 65
+                        ax2.annotate('', xy=(x_start + cur_d + fut_d, 100 - x_start), xytext=(x_start + cur_d, 100 - x_start),
+                                     arrowprops=dict(facecolor='#b91c1c', edgecolor='none', width=1.5, headwidth=6, shrink=0.02))
+                    if fut_s != 0:
+                        x_start = 35 if fut_s > 0 else 65
+                        ax2.annotate('', xy=(x_start + cur_s + fut_s, x_start), xytext=(x_start + cur_s, x_start),
+                                     arrowprops=dict(facecolor='#1d4ed8', edgecolor='none', width=1.5, headwidth=6, shrink=0.02))
+
                 ax2.set_title(f"② 미래 {product_name} 시장 예측 이동", fontproperties=font_prop, fontsize=11, fontweight="bold")
-                ax2.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=9)
-                ax2.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=9)
+                ax2.set_xlim(0, 100), ax2.set_ylim(0, 100)
+                ax2.set_xlabel("수량 (Q)", fontproperties=font_prop), ax2.set_ylabel("가격 (P)", fontproperties=font_prop)
                 ax2.legend(prop=font_prop, loc="upper right", fontsize=8)
                 ax2.grid(True, linestyle=':', alpha=0.3)
 
