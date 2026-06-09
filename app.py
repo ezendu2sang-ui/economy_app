@@ -6,12 +6,12 @@ import numpy as np
 import os
 import urllib.request
 
-# 1. 페이지 레이아웃 및 디자인 설정
+# 1. 페이지 레이아웃 및 디자인 설정 (전체 화면 최적화)
 st.set_page_config(page_title="경제 수행평가 유레카!", layout="wide")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght=400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Pretendard', sans-serif;
         background-color: #f8fafc;
@@ -42,7 +42,7 @@ st.markdown("""
     }
     .card-box {
         background-color: white;
-        padding: 1.5rem;
+        padding: 1.8rem;
         border-radius: 1rem;
         border: 1px solid #e2e8f0;
         box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
@@ -51,7 +51,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2. 한글 폰트 설정 (그래프 깨짐 방지)
+# 2. 한글 폰트 설정 (그래프 글자 깨짐 방지)
 @st.cache_data
 def load_font():
     font_url = "https://github.com/google/fonts/raw/main/ofl/nanumgothic/NanumGothic-Regular.ttf"
@@ -75,7 +75,7 @@ except Exception:
 st.markdown("""
     <div class="main-header">
         <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0;">🧠 경제 수행평가 유레카! (스스로 완성형)</h1>
-        <p style="font-size: 0.85rem; color: #64748b; margin: 5px 0 0 0;">AI의 원리 해설과 맞춤형 작성 가이드를 참고하여 나만의 멋진 경제 기사를 작성해 보세요.</p>
+        <p style="font-size: 0.85rem; color: #64748b; margin: 5px 0 0 0;">AI 멘토의 안내와 생생한 예시를 참고하여 나만의 멋진 기사를 완성해 보세요.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -85,27 +85,28 @@ col_left, col_right = st.columns([5, 7], gap="large")
 with col_left:
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.markdown('<h3><span class="step-badge">STEP 1</span><b>조사한 경제 뉴스 입력</b></h3>', unsafe_allow_html=True)
-    st.write("가져온 뉴스 기사의 제목과 본문을 입력하면 AI 멘토가 분석 가이드를 열어줍니다.")
+    st.write("가져온 뉴스 기사의 제목과 본문을 입력하면 AI 멘토가 분석 가이드를 제공합니다.")
     
     title_input = st.text_input("📍 뉴스 제목", placeholder="예시: 기상이변으로 원두 생산 비상, 커피값 오르나")
-    body_input = st.text_area("📍 뉴스 본문", placeholder="뉴스 내용을 이곳에 붙여넣으세요...", height=300)
+    body_input = st.text_area("📍 뉴스 본문", placeholder="뉴스 내용을 이곳에 붙여넣으세요...", height=350)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_right:
     if not title_input and not body_input:
         st.markdown("""
-            <div class="card-box" style="text-align: center; padding: 5rem 2rem;">
+            <div class="card-box" style="text-align: center; padding: 6rem 2rem;">
                 <h3 style="color: #3b82f6; font-size: 1.25rem;">💡 경제 탐구 멘토링 가동 준비 완료!</h3>
                 <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">
                     왼쪽에 뉴스를 입력하면 정답을 그대로 복사해 주는 대신,<br>
-                    <b>중학생 눈높이 원리 ➡️ 정확한 변동 화살표 차트 ➡️ 영역별 작성 안내 및 생생한 예시</b>를 제공합니다.
+                    <b>중학생 눈높이 원리 해설 📊 그래프 분석 📖 단어 사전 ✍️ 영역별 작성 가이드 및 예시</b>를<br>
+                    안전하고 정돈된 하나의 리포트로 깔끔하게 펼쳐드립니다.
                 </p>
             </div>
         """, unsafe_allow_html=True)
     else:
         with st.spinner("🕵️ AI 멘토가 기사 속 시장 경제 원리를 정밀 분석 중입니다..."):
             try:
-                # 뼈대와 질문, 그리고 구체적인 작성 예시를 포함하도록 프롬프트 고도화
+                # 완벽한 가이드라인 출력을 위한 고정 프롬프트
                 prompt = f"""
                 너는 중학교 사회 선생님이자 친절한 경제 멘토야. 
                 학생이 가져온 경제 뉴스를 분석해서 스스로 '경제 기사 작성하기' 수행평가를 완벽하게 완성할 수 있도록 '학습 가이드라인 및 영역별 구체적 예시'를 제공해 주렴.
@@ -118,28 +119,34 @@ with col_right:
                 [DATA] 상품명, 현재수요(증가/감소/없음), 현재공급(증가/감소/없음), 미래수요(증가/감소/없음), 미래공급(증가/감소/없음)
                 예시: [DATA] 커피, 없음, 감소, 증가, 없음
 
-                그 아래에는 구분선(---)을 긋고 아래 목차대로 내용을 채워줘:
+                그 아래에는 구분선(---)을 긋고 아래 양식을 토대로 생생한 예시와 가이드를 모두 작성해줘:
                 ---
+                ## 📊 AI 멘토의 수행평가 안내서
+
                 ### 1. 🔍 중학생 눈높이 원리 해설
-                * **어떤 시장 이야기인가요?**: (기사 속 상품 시장이 무엇인지 명확히 짚어주기)
-                * **원리 쉽게 이해하기**: (현재 기사에서 수요나 공급 중 무엇이 왜 움직였는지 비유를 들어 쉽게 해설)
+                * **어떤 상품 시장의 이야기인가요?**: (기사 속 주인공이 되는 상품 시장 설명)
+                * **수요·공급 원리 쉽게 이해하기**: (현재 기사에서 수요나 공급 중 어떤 요인이 왜 움직였는지 비유를 들어 아주 쉽게 설명)
                 
                 ### 2. 📖 기사 속 '어려운 경제 용어' 쏙쏙 사전
-                (기사 본문에 나온 어려운 단어나 경제 개념을 2개 골라 뜻을 아주 쉽게 풀이해줘)
+                (기사 본문에 나오는 생소한 어휘나 경제 용어를 2개 골라 뜻을 중학생 눈높이로 쉽게 풀이)
 
-                ### 3. ✍️ 나만의 기사 작성하기! 핵심 가이드라인 & 예시
+                ### 3. ✍️ 나만의 기사 작성하기! 영역별 꿀팁 가이드 & 예시
                 
-                #### 📌 [표제(제목) 작성법]
-                * **안내**: 뉴스 제목을 그대로 베끼지 말고, 기사 내용을 관통하면서 '수요'나 '공급'이라는 단어가 직접 연상되거나 포함되도록 참신하게 지어보렴.
-                * **💡 작성 예시**: (이 기사의 내용을 바탕으로 수요/공급 단어가 들어간 멋진 제목 예시를 1~2개 제안해줘)
+                #### 📌 [표제(제목) 작성 가이드]
+                * **작성 안내**: 단순히 뉴스의 원래 제목을 받아 적으면 감점 요인이 된단다! 기사 내용을 잘 관통하면서, **'수요'나 '공급'이라는 단어가 직접 연상되거나 포함되도록** 참신하게 제목을 지어보렴.
+                * **💡 참신한 표제 예시**: 
+                  (여기에 이 기사를 바탕으로 '수요'나 '공급'이라는 핵심 단어가 포함된 멋진 기사 제목 예시를 2개 제안해줘)
 
-                #### 📌 [전문(3줄 요약) 작성법]
-                * **안내**: 전문은 기사 전체를 읽지 않아도 핵심을 알 수 있게 3줄로 요약하는 곳이란다. **1) 현재 변동 원인, 2) 그로 인한 현재 가격 결과, 3) 미래에 예상되는 변화나 가격 예측**이 각각 한 줄씩 들어가면 완벽해!
-                * **💡 작성 예시**: (위 조건 3가지를 모두 만족하는 3줄 요약 전문 예시를 완성된 글로 보여줘)
+                #### 📌 [전문(3줄 요약) 작성 가이드]
+                * **작성 안내**: 전문은 바쁜 독자들을 위해 기사 전체를 읽지 않아도 핵심을 알 수 있게 요약하는 코너야. 반드시 **[1) 현재 시장의 변동 원인, 2) 그로 인한 현재 가격과 거래량 결과, 3) 미래에 예상되는 추가 변화나 최종 가격 예측]**의 3가지 요소가 각각 한 줄씩 논리적인 인과관계로 들어가야 완점 점수를 받는단다.
+                * **💡 3줄 전문 예시**: 
+                  (위의 3가지 조건을 철저히 지켜서 이 기사에 딱 맞는 완성형 3줄 전문 예시를 보기 좋게 작성해줘)
 
-                #### 📌 [본문 작성법 (그래프 활용 및 설명)]
-                * **안내**: 본문에는 우리가 아래에 그려준 **현재 그래프(①)와 미래 그래프(②)를 모두 첨부**해야 한단다! 글을 쓸 때는 반드시 그래프 속 곡선이 움직인 방향을 설명하며, **"현재는 [수요/공급] 요인 때문에 가격이 [상승/하락]했지만, 미래에는 새로운 [수요/공급] 변동 요인(선호도, 대체재 등)이 생겨 가격이 최종적으로 [어떻게] 될 것이다"**라는 인과관계와 결과를 논리적으로 적어주렴.
-                * **💡 작성 예시**: (학생들이 보고 흐름을 배울 수 있도록, 현재 원인·결과와 미래 예측·결과가 경제학적 인과관계로 매끄럽게 연결된 본문 글 예시를 완성도 있게 작성해줘)
+                #### 📌 [본문 작성 가이드 (그래프 필수 활용)]
+                * **작성 안내**: 본문을 작성할 때는 아래에 AI 멘토가 그려준 **[① 현재 그래프]와 [② 미래 예측 그래프]를 본문에 꼭 첨부하고 설명**해야 해! 글 속에는 곡선이 오른쪽이나 왼쪽 중 어느 방향으로 움직였는지(이동) 언급해 주렴. 
+                특히, **"현재는 [어떤 요인] 때문에 수요·공급이 변해 가격이 [상승/하락]하는 결과가 나타났지만, 미래에는 새로운 [수요/공급 변동 요인(선호도, 대체재 등)]이 작동하여 최종적으로 시장 가격과 거래량이 [어떻게] 바뀔 것이다"**라는 과학적인 원인과 결과를 줄글로 멋지게 서술해야 한단다.
+                * **💡 완벽한 본문 예시**: 
+                  (학생들이 보고 서술 흐름을 모방하여 공부할 수 있도록, 현재 분석과 미래 예측이 경제학적 인과관계로 매끄럽게 연결된 훌륭한 본문 글 예시를 완성도 있게 작성해줘)
                 """
 
                 response = client.chat.completions.create(
@@ -172,96 +179,80 @@ with col_right:
                     except:
                         pass
                 
+                # 가이드 텍스트 순수 분리 (안전하게 구분선 기준으로 추출)
                 ai_guide = "\n".join([line for line in lines if not line.startswith("[DATA]")])
                 if "---" in ai_guide:
                     ai_guide = ai_guide.split("---", 1)[1].strip()
 
-                parts = ai_guide.split("###")
-                part_explain = ""
-                part_dict = ""
-                part_write_guide = ""
-                
-                for p in parts:
-                    if "1. 🔍" in p or "1. " in p: part_explain = p
-                    elif "2. 📖" in p or "2. " in p: part_dict = p
-                    elif "3. ✍️" in p or "3. " in p: part_write_guide = p
+                # --- 1. 상단 해설서 출력 박스 ---
+                # UI 분리가 꼬이지 않도록, 그래프 앞에 나오는 1번, 2번 영역을 먼저 파싱하거나 순서대로 깔끔하게 출력합니다.
+                intro_part = ai_guide.split("### 3. ✍️")[0].strip()
+                guide_part = ""
+                if "### 3. ✍️" in ai_guide:
+                    guide_part = "### 3. ✍️ " + ai_guide.split("### 3. ✍️")[1].strip()
 
-                # 4. 해설 영역 출력
-                if part_explain:
-                    st.markdown('<div class="card-box">', unsafe_allow_html=True)
-                    st.markdown(f"### {part_explain.strip()}")
-                    st.markdown('</div>', unsafe_allow_html=True)
-
-                # 5. 그래프 2개 시각화 영역 (화살표 및 실선 보정 버전)
                 st.markdown('<div class="card-box">', unsafe_allow_html=True)
-                st.markdown('<h3><span class="result-badge">수행평가 제출용 차트</span> <b>수요·공급 곡선 균형 이동 시뮬레이션 (2단계)</b></h3>', unsafe_allow_html=True)
-                st.write("오른쪽 화살표 방향을 잘 관찰해 보세요. 미래 그래프는 현재 이동한 상태(점선)를 기준으로 추가 변동을 보여줍니다.")
+                st.markdown(intro_part)
+                st.markdown('</div>', unsafe_allow_html=True)
+
+                # --- 2. 중앙 그래프 2개 시각화 영역 (화살표 강화 버전) ---
+                st.markdown('<div class="card-box">', unsafe_allow_html=True)
+                st.markdown('<h3><span class="result-badge">수행평가 연계</span> <b>시각화 가이드: 수요·공급 곡선 변화 (2단계)</b></h3>', unsafe_allow_html=True)
+                st.write("아래 화살표와 실선을 관찰하며 본문을 작성해 보세요. 미래 예측 그래프는 현재 이동한 곡선(점선)을 기준으로 추가 변동을 보여줍니다.")
                 
                 q_vals = np.linspace(10, 90, 100)
                 d_base = 100 - q_vals
                 s_base = q_vals
 
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.5))
+                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.3))
                 
-                # --- [그래프 1: 현재 상황] ---
+                # [그래프 1: 현재 상황]
                 ax1.plot(q_vals, d_base, color="#cbd5e1", linestyle="--", alpha=0.7, label="원래 수요(D)")
                 ax1.plot(q_vals, s_base, color="#cbd5e1", linestyle="--", alpha=0.7, label="원래 공급(S)")
-                
-                # 변동이 일어난 실제 곡선을 굵은 실선으로 강조
                 ax1.plot(q_vals, d_base + cur_d, color="#e11d48", linewidth=2.5, label="현재 수요(D1)")
                 ax1.plot(q_vals, s_base + cur_s, color="#2563eb", linewidth=2.5, label="현재 공급(S1)")
-                
-                # 선명하고 확실한 변동 방향 화살표 표시
                 if cur_d != 0:
                     ax1.annotate('', xy=(50 + cur_d, 50 + cur_d/2), xytext=(50, 50),
                                  arrowprops=dict(facecolor='#e11d48', edgecolor='#be123c', shrink=0.05, width=2, headwidth=7))
                 if cur_s != 0:
                     ax1.annotate('', xy=(50 - cur_s/2, 50 + cur_s/2), xytext=(50, 50),
                                  arrowprops=dict(facecolor='#2563eb', edgecolor='#1d4ed8', shrink=0.05, width=2, headwidth=7))
-                
                 ax1.set_title(f"① 현재 {product_name} 시장의 균형 이동", fontproperties=font_prop, fontsize=10, fontweight="bold")
-                ax1.set_xlabel("수량 (Quantity)", fontproperties=font_prop, fontsize=8)
-                ax1.set_ylabel("가격 (Price)", fontproperties=font_prop, fontsize=8)
+                ax1.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=8)
+                ax1.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=8)
                 ax1.legend(prop=font_prop, loc="upper right", fontsize=7)
-                ax1.grid(True, linestyle=':', alpha=0.4)
+                ax1.grid(True, linestyle=':', alpha=0.3)
 
-                # --- [그래프 2: 미래 예측 상황] ---
-                # 현재 상태를 기준선(연한 점선)으로 깔아줌
+                # [그래프 2: 미래 예측 상황]
                 ax2.plot(q_vals, d_base + cur_d, color="#fca5a5", linestyle="--", alpha=0.7, label="현재 수요(D1)")
                 ax2.plot(q_vals, s_base + cur_s, color="#93c5fd", linestyle="--", alpha=0.7, label="현재 공급(S1)")
-                
-                # 미래의 최종 변동 곡선을 가장 굵은 실선으로 완벽 시각화
                 ax2.plot(q_vals, d_base + cur_d + fut_d, color="#b91c1c", linewidth=2.8, label="미래 수요(D2)")
                 ax2.plot(q_vals, s_base + cur_s + fut_s, color="#1d4ed8", linewidth=2.8, label="미래 공급(S2)")
-                
-                # 미래 변동 화살표 (현재 위치에서 출발하여 미래 위치로 향함)
                 if fut_d != 0:
                     ax2.annotate('', xy=(50 + cur_d + fut_d, 50 + cur_d/2 + fut_d/2), xytext=(50 + cur_d, 50 + cur_d/2),
                                  arrowprops=dict(facecolor='#b91c1c', edgecolor='#7f1d1d', shrink=0.05, width=2, headwidth=7))
                 if fut_s != 0:
                     ax2.annotate('', xy=(50 - cur_s/2 - fut_s/2, 50 + cur_s/2 + fut_s/2), xytext=(50 - cur_s/2, 50 + cur_s/2),
                                  arrowprops=dict(facecolor='#1d4ed8', edgecolor='#1e3a8a', shrink=0.05, width=2, headwidth=7))
-                
                 ax2.set_title(f"② 미래 {product_name} 시장 예측 이동", fontproperties=font_prop, fontsize=10, fontweight="bold")
-                ax2.set_xlabel("수량 (Quantity)", fontproperties=font_prop, fontsize=8)
-                ax2.set_ylabel("가격 (Price)", fontproperties=font_prop, fontsize=8)
+                ax2.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=8)
+                ax2.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=8)
                 ax2.legend(prop=font_prop, loc="upper right", fontsize=7)
-                ax2.grid(True, linestyle=':', alpha=0.4)
+                ax2.grid(True, linestyle=':', alpha=0.3)
 
                 plt.tight_layout()
                 st.pyplot(fig)
                 st.markdown('</div>', unsafe_allow_html=True)
 
-                # 6. 용어 사전 출력
-                if part_dict:
-                    st.markdown('<div class="card-box" style="background-color: #fffbeb; border: 1px solid #fef3c7;">', unsafe_allow_html=True)
-                    st.markdown(f"### {part_dict.strip()}")
+                # --- 3. 하단 핵심 작성법 및 예시 출력 박스 ---
+                if guide_part:
+                    st.markdown('<div class="card-box" style="background-color: #faf5ff; border: 1px solid #e9d5ff;">', unsafe_allow_html=True)
+                    st.markdown(guide_part)
                     st.markdown('</div>', unsafe_allow_html=True)
-
-                # 7. 기사 작성 가이드라인 및 예시 통합 출력
-                if part_write_guide:
-                    st.markdown('<div class="card-box" style="background-color: #faf5ff; border: 1px solid #f3e8ff;">', unsafe_allow_html=True)
-                    st.markdown(f"### {part_write_guide.strip()}")
+                else:
+                    # 파싱 낙오 방지용 백업 출력
+                    st.markdown('<div class="card-box" style="background-color: #faf5ff; border: 1px solid #e9d5ff;">', unsafe_allow_html=True)
+                    st.markdown(ai_guide)
                     st.markdown('</div>', unsafe_allow_html=True)
 
             except Exception as e:
