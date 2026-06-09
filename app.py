@@ -11,7 +11,7 @@ st.set_page_config(page_title="경제 수행평가 유레카!", layout="wide")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght=400;500;600;700;800&display=swap');
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Pretendard', sans-serif;
         background-color: #f8fafc;
@@ -85,9 +85,9 @@ col_left, col_right = st.columns([5, 7], gap="large")
 with col_left:
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.markdown('<h3><span class="step-badge">STEP 1</span><b>조사한 경제 뉴스 입력</b></h3>', unsafe_allow_html=True)
-    st.write("가져온 뉴스 기사의 제목และ 본문을 입력하면 AI 멘토가 분석 가이드를 제공합니다.")
+    st.write("가져온 뉴스 기사의 제목과 본문을 입력하면 AI 멘토가 분석 가이드를 제공합니다.")
     
-    title_input = st.text_input("📍 뉴스 제목", placeholder="예시: 기상이변으로 원두 생산 비상, 커피값 오르나")
+    title_input = st.text_input("📍 뉴스 제목", placeholder="예시: 풍작으로 양파 공급 과잉, 농가 시름 깊어져")
     body_input = st.text_area("📍 뉴스 본문", placeholder="뉴스 내용을 이곳에 붙여넣으세요...", height=350)
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -106,19 +106,21 @@ with col_right:
     else:
         with st.spinner("🕵️ AI 멘토가 기사 속 시장 경제 원리를 정밀 분석 중입니다..."):
             try:
-                # 오리지널 연동 프롬프트 유지
+                # 메커니즘을 꼬지 않도록 AI 프롬프트에 엄격한 경제학 가이드라인 추가
                 prompt = f"""
                 너는 중학교 사회 선생님이자 친절한 경제 멘토야. 
                 학생이 가져온 경제 뉴스를 바탕으로, 현재의 수요·공급 상태와 '미래의 타당한 예측'을 명확하게 도출해서 알려주렴.
                 말투는 "~란다", "~요" 같은 다정한 선생님 말투를 써줘.
 
+                [중요 경제학 원칙]: 
+                기사에서 가격 변동의 '원인'이 공급 증가라면 수요는 '없음'이어야 해. 가격 하락으로 소비자가 반응하는 것은 '수요량의 변화'이므로 수요 곡선 자체를 움직이면 안 된단다! 원인 요인 하나만 확실하게 움직여줘.
+
                 [입력 뉴스 제목]: {title_input}
                 [입력 뉴스 본문]: {body_input}
 
-                반드시 첫 줄에 그래프 제어를 위한 데이터를 아래 형식(대괄호 및 쉼표 구분)을 칼같이 지켜서 작성해야 해. 
-                미래 예측은 기사 내용에 직접 없더라도 선호도 변화, 기술 변화, 소득 변화 등 타당한 경제학적 근거를 바탕으로 상상하여 예측 데이터를 무조건 만들어줘.
+                반드시 첫 줄에 그래프 제어를 위한 데이터를 아래 형식(대괄호 및 쉼표 구분)을 칼같이 지켜서 작성해야 해.
                 [DATA] 상품명, 현재수요(증가/감소/없음), 현재공급(증가/감소/없음), 미래수요(증가/감소/없음), 미래공급(증가/감소/없음)
-                예시: [DATA] 커피, 없음, 감소, 증가, 없음
+                예시: [DATA] 양파, 없음, 증가, 증가, 없음
 
                 그 아래에는 구분선(---)을 긋고 아래 양식을 토대로 생생한 가이드라인과 예시를 모두 작성해줘:
                 ---
@@ -126,7 +128,7 @@ with col_right:
 
                 ### 1. 🔍 중학생 눈높이 원리 해설
                 * **어떤 상품 시장의 이야기인가요?**: (기사 속 주인공이 되는 상품 시장 설명)
-                * **수요·공급 원리 쉽게 이해하기**: (현재 기사에서 수요나 공급 중 어떤 요인이 왜 움직였는지 비유를 들어 아주 쉽게 설명)
+                * **수요·공급 원리 쉽게 이해하기**: (현재 기사에서 수요나 공급 중 '단 하나'의 요인이 왜 움직였는지 비유를 들어 아주 쉽게 설명)
                 
                 ### 2. 📖 기사 속 '어려운 경제 용어' 쏙쏙 사전
                 (기사 본문에 나오는 생소한 어휘나 경제 용어를 2개 골라 뜻을 중학생 눈높이로 쉽게 풀이)
@@ -134,20 +136,13 @@ with col_right:
                 ### 3. ✍️ 나만의 기사 작성하기! 영역별 꿀팁 가이드 & 예시
                 
                 #### 📌 [표제(제목) 작성 가이드]
-                * **작성 안내**: 단순히 뉴스의 원래 제목을 받아 적으면 감점 요인이 된단다! 기사 내용을 잘 관통하면서, **'수요'나 '공급'이라는 단어가 직접 연상되거나 포함되도록** 참신하게 제목을 지어보렴.
-                * **💡 참신한 표제 예시**: 
-                  (여기에 이 기사를 바탕으로 '수요'나 '공급'이라는 핵심 단어가 포함된 멋진 기사 제목 예시를 2개 제안해줘)
+                * **💡 참신한 표제 예시**: (핵심 요약 제목 2개)
 
                 #### 📌 [전문(3줄 요약) 작성 가이드]
-                * **작성 안내**: 전문은 바쁜 독자들을 위해 기사 전체를 읽지 않아도 핵심을 알 수 있게 요약하는 코너야. 반드시 **[1) 현재 시장의 변동 원인, 2) 그로 인한 현재 가격과 거래량 결과, 3) 미래에 예상되는 추가 변화나 최종 가격 예측]**의 3가지 요소가 각각 한 줄씩 논리적인 인과관계로 들어가야 완점 점수를 받는단다.
-                * **💡 3줄 전문 예시**: 
-                  (위의 3가지 조건을 철저히 지켜서 이 기사에 딱 맞는 완성형 3줄 전문 예시를 보기 좋게 작성해줘)
+                * **💡 3줄 전문 예시**: (조건에 맞춘 완성형 3줄 전문 예시)
 
                 #### 📌 [본문 작성 가이드 (그래프 필수 활용)]
-                * **작성 안내**: 본문을 작성할 때는 아래에 AI 멘토가 그려준 **[① 현재 그래프]와 [② 미래 예측 그래프]를 본문에 꼭 첨부하고 설명**해야 해! 글 속에는 곡선이 오른쪽이나 왼쪽 중 어느 방향으로 움직였인지(이동) 언급해 주렴. 
-                특히, **"현재는 [어떤 요인] 때문에 수요·공급이 변해 가격이 [상승/하락]하는 결과가 나타났지만, 미래에는 새로운 [수요/공급 변동 요인(선호도, 대체재 등)]이 작동하여 최종적으로 시장 가격과 거래량이 [어떻게] 될 것이다"**라는 과학적인 원인과 결과를 줄글로 멋지게 서술해야 한단다.
-                * **💡 완벽한 본문 예시**: 
-                  (학생들이 보고 서술 흐름을 모방하여 공부할 수 있도록, 현재 분석과 미래 예측이 경제학적 인과관계로 매끄럽게 연결된 훌륭한 본문 글 예시를 완성도 있게 작성해줘)
+                * **💡 완벽한 본문 예시**: (현재 분석과 미래 예측이 매끄럽게 연결된 줄글 본문 예시)
                 """
 
                 response = client.chat.completions.create(
@@ -156,19 +151,20 @@ with col_right:
                 )
                 full_response = response.choices[0].message.content
 
-                # 데이터 파싱 및 연동 연산
+                # 유연하고 강력한 데이터 파싱 로직으로 업그레이드 (공백 제거)
                 lines = full_response.split('\n')
-                data_line = [line for line in lines if line.strip().startswith("[DATA]")]
+                data_line = [line for line in lines if "[DATA]" in line]
                 
-                product_name = "해당 상품"
+                product_name = "상품"
                 cur_d, cur_s, fut_d, fut_s = 0, 0, 0, 0
                 
                 if data_line:
                     try:
-                        raw_data = data_line[0].replace("[DATA]", "").strip().split(",")
-                        product_name = raw_data[0].strip()
+                        raw_str = data_line[0].split("[DATA]")[1].strip()
+                        raw_data = [x.strip() for x in raw_str.split(",")]
+                        product_name = raw_data[0]
                         
-                        # 수평 평행 이동을 위한 시프트 가중치 설정 (우측 +, 좌측 -)
+                        # 완전한 경제학적 수평 평행이동 값 세팅 (스케일 최적화)
                         if "증가" in raw_data[1]: cur_d = 20
                         elif "감소" in raw_data[1]: cur_d = -20
                         if "증가" in raw_data[2]: cur_s = 20
@@ -181,86 +177,88 @@ with col_right:
                     except Exception as e:
                         pass
                 
-                # 가이드 텍스트 분리
-                ai_guide = "\n".join([line for line in lines if not line.strip().startswith("[DATA]")])
+                ai_guide = "\n".join([line for line in lines if "[DATA]" not in line])
                 if "---" in ai_guide:
                     ai_guide = ai_guide.split("---", 1)[1].strip()
 
                 intro_part = ai_guide.split("### 3. ✍️")[0].strip() if "### 3. ✍️" in ai_guide else ai_guide
                 guide_part = "### 3. ✍️ " + ai_guide.split("### 3. ✍️")[1].strip() if "### 3. ✍️" in ai_guide else ""
 
-                # 1. 상단 해설서 상자 출력
+                # 1. 상단 해설서 출력
                 st.markdown('<div class="card-box">', unsafe_allow_html=True)
                 st.markdown(intro_part)
                 st.markdown('</div>', unsafe_allow_html=True)
 
-                # 2. 중앙 그래프 시각화 (★수학적 수평 이동 매커니즘 완벽 보정 완료★)
+                # 2. 중앙 그래프 시각화 (★경제학적 원리와 깨끗한 화살표 완벽 보정★)
                 st.markdown('<div class="card-box">', unsafe_allow_html=True)
-                st.markdown('<h3><span class="result-badge">수행평가 차트 연계</span> <b>시각화 가이드: 단계별 곡선 변화 (2가지 상황)</b></h3>', unsafe_allow_html=True)
-                st.write("오른쪽 화살표 방향을 잘 관찰하세요. 미래 그래프는 이미 변동된 현재 곡선(D1, S1)을 바탕으로 정확히 평행 이동합니다.")
+                st.markdown('<h3><span class="result-badge">수행평가 차트 연계</span> <b>시각화 가이드: 단계별 곡선 변화</b></h3>', unsafe_allow_html=True)
                 
                 q_vals = np.linspace(10, 90, 100)
                 d_base = 100 - q_vals
                 s_base = q_vals
 
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.3))
+                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.5))
                 
-                # --- ① 현재 그래프 (곡선 수식 평행이동 보정) ---
+                # --- ① 현재 그래프 (원래 점선 -> 현재 실선 이동) ---
                 ax1.plot(q_vals, d_base, color="#cbd5e1", linestyle="--", alpha=0.7, label="원래 수요(D)")
                 ax1.plot(q_vals, s_base, color="#cbd5e1", linestyle="--", alpha=0.7, label="원래 공급(S)")
                 
-                # 경제학적 X축 평행이동 공식 적용 (수량 축 조절)
+                # 순수 평행 이동 수식 적용
                 d_current = 100 - (q_vals - cur_d)
                 s_current = q_vals - cur_s
                 
                 ax1.plot(q_vals, d_current, color="#e11d48", linewidth=2.5, label="현재 수요(D1)")
                 ax1.plot(q_vals, s_current, color="#2563eb", linewidth=2.5, label="현재 공급(S1)")
                 
-                # 화살표가 대각선으로 꺾이지 않고 수평(→ 또는 ←)으로만 발사되도록 matplotlib.arrow 기하학 보정
+                # [보정] 지저분한 내장 arrow 대신 깔끔하고 직관적인 선형 주석(annotate) 화살표 도입
                 if cur_d != 0:
-                    direction = 1 if cur_d > 0 else -1
-                    ax1.arrow(50, 50, cur_d - (direction * 4), 0, head_width=4, head_length=4, fc='#e11d48', ec='#be123c', length_includes_head=True)
+                    x_start = 40 if cur_d > 0 else 60
+                    ax1.annotate('', xy=(x_start + cur_d, 100 - x_start), xytext=(x_start, 100 - x_start),
+                                 arrowprops=dict(facecolor='#e11d48', edgecolor='none', width=2, headwidth=7, shrink=0.05))
                 if cur_s != 0:
-                    direction = 1 if cur_s > 0 else -1
-                    # 공급 곡선 특성상 평행 이동 시 기준점 높이 조정
-                    ax1.arrow(50, 50, cur_s - (direction * 4), 0, head_width=4, head_length=4, fc='#2563eb', ec='#1d4ed8', length_includes_head=True)
+                    x_start = 40 if cur_s > 0 else 60
+                    ax1.annotate('', xy=(x_start + cur_s, x_start), xytext=(x_start, x_start),
+                                 arrowprops=dict(facecolor='#2563eb', edgecolor='none', width=2, headwidth=7, shrink=0.05))
                 
-                ax1.set_title(f"① 현재 {product_name} 시장의 균형 이동", fontproperties=font_prop, fontsize=10, fontweight="bold")
-                ax1.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=8)
-                ax1.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=8)
-                ax1.legend(prop=font_prop, loc="upper right", fontsize=7)
+                ax1.set_title(f"① 현재 {product_name} 시장의 균형 이동", fontproperties=font_prop, fontsize=11, fontweight="bold")
+                ax1.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=9)
+                ax1.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=9)
+                ax1.legend(prop=font_prop, loc="upper right", fontsize=8)
                 ax1.grid(True, linestyle=':', alpha=0.3)
 
-                # --- ② 미래 예측 그래프 (현재 최종선을 점선 베이스로 연동) ---
+                # --- ② 미래 예측 그래프 (현재 최종선을 베이스 점선으로 활용) ---
                 ax2.plot(q_vals, d_current, color="#fca5a5", linestyle="--", alpha=0.7, label="현재 수요(D1)")
                 ax2.plot(q_vals, s_current, color="#93c5fd", linestyle="--", alpha=0.7, label="현재 공급(S1)")
                 
-                # 미래의 누적 수평 평행이동 수식 적용
+                # 미래 누적 평행 이동 수식
                 d_future = 100 - (q_vals - cur_d - fut_d)
                 s_future = q_vals - cur_s - fut_s
                 
                 ax2.plot(q_vals, d_future, color="#b91c1c", linewidth=2.8, label="미래 수요(D2)")
                 ax2.plot(q_vals, s_future, color="#1d4ed8", linewidth=2.8, label="미래 공급(S2)")
                 
-                # 미래 화살표도 수평 가로 방향 축을 기준으로 정밀 발사
+                # 미래 예측 깔끔한 수평 화살표 매칭
                 if fut_d != 0:
-                    direction = 1 if fut_d > 0 else -1
-                    ax2.arrow(50 + cur_d, 50 - cur_d, fut_d - (direction * 4), 0, head_width=4, head_length=4, fc='#b91c1c', ec='#7f1d1d', length_includes_head=True)
+                    x_start = 40 if fut_d > 0 else 60
+                    # 현재 시프트된 축 위에서 출발
+                    ax2.annotate('', xy=(x_start + cur_d + fut_d, 100 - x_start), xytext=(x_start + cur_d, 100 - x_start),
+                                 arrowprops=dict(facecolor='#b91c1c', edgecolor='none', width=2, headwidth=7, shrink=0.05))
                 if fut_s != 0:
-                    direction = 1 if fut_s > 0 else -1
-                    ax2.arrow(50 + cur_s, 50 + cur_s, fut_s - (direction * 4), 0, head_width=4, head_length=4, fc='#1d4ed8', ec='#1e3a8a', length_includes_head=True)
+                    x_start = 40 if fut_s > 0 else 60
+                    ax2.annotate('', xy=(x_start + cur_s + fut_s, x_start), xytext=(x_start + cur_s, x_start),
+                                 arrowprops=dict(facecolor='#1d4ed8', edgecolor='none', width=2, headwidth=7, shrink=0.05))
                 
-                ax2.set_title(f"② 미래 {product_name} 시장 예측 이동", fontproperties=font_prop, fontsize=10, fontweight="bold")
-                ax2.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=8)
-                ax2.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=8)
-                ax2.legend(prop=font_prop, loc="upper right", fontsize=7)
+                ax2.set_title(f"② 미래 {product_name} 시장 예측 이동", fontproperties=font_prop, fontsize=11, fontweight="bold")
+                ax2.set_xlabel("수량 (Q)", fontproperties=font_prop, fontsize=9)
+                ax2.set_ylabel("가격 (P)", fontproperties=font_prop, fontsize=9)
+                ax2.legend(prop=font_prop, loc="upper right", fontsize=8)
                 ax2.grid(True, linestyle=':', alpha=0.3)
 
                 plt.tight_layout()
                 st.pyplot(fig)
                 st.markdown('</div>', unsafe_allow_html=True)
 
-                # 3. 하단 기사 작성 가이드 및 예시 박스 출력
+                # 3. 하단 작성 가이드 출력
                 if guide_part:
                     st.markdown('<div class="card-box" style="background-color: #faf5ff; border: 1px solid #e9d5ff;">', unsafe_allow_html=True)
                     st.markdown(guide_part)
